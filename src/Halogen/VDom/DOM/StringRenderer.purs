@@ -13,7 +13,7 @@ import Halogen.VDom.StringRenderer.Util (escape)
 import Unsafe.Coerce (unsafeCoerce)
 
 render ∷ ∀ i w. (w → String) → VDom (Array (Prop i)) w → String
-render renderWidget = VSR.render getTagType renderProps renderWidget
+render renderWidget = VSR.render textEscape getTagType renderProps renderWidget
 
 getTagType ∷ ElemName → VSR.TagType
 getTagType (ElemName en)
@@ -48,7 +48,7 @@ renderProperty name prop = case typeOf (unsafeToForeign prop) of
   where
   name' = propNameToAttrName name
 
-voidElements :: Set.Set String
+voidElements ∷ Set.Set String
 voidElements =
   Set.fromFoldable names
   where
@@ -69,4 +69,25 @@ voidElements =
     , "source"
     , "track"
     , "wbr"
+    ]
+
+-- | Example where Text should not be escaped
+-- |
+-- | <script type="application/json">
+-- |   { value: "this json should not be escaped" }
+-- |   <div>but non-text children should be</div>
+-- | </script>
+
+textEscape ∷ Maybe ElemName → String → String
+textEscape Nothing = identity -- if there is no parent element - dont escape Text
+textEscape (Just (ElemName elementName))
+  | Set.member elementName elementsWithNonEscapedText = identity
+  | otherwise = escape
+
+elementsWithNonEscapedText ∷ Set.Set String
+elementsWithNonEscapedText =
+  Set.fromFoldable names
+  where
+  names =
+    [ "script"
     ]
