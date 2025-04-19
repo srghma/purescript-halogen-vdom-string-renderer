@@ -94,8 +94,8 @@
         },
         "test": {
           "dependencies": [
-            "console",
             "effect",
+            "spec",
             "spec-node"
           ],
           "build_plan": [

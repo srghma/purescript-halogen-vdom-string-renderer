@@ -20,8 +20,8 @@ package:
   test:
     main: Test.Main
     dependencies:
-      - console
       - effect
+      - spec
       - spec-node
 workspace:
   packageSet:
