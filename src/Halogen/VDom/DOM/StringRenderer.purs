@@ -6,6 +6,7 @@ import Halogen.VDom.DOM.Prop (Prop(..), PropValue)
 import Data.Array as A
 import Foreign (unsafeToForeign, typeOf)
 import Data.Maybe (Maybe(..))
+import Data.Number.Format as Data.Number.Format
 import Data.String as S
 import Data.Set as Set
 import Halogen.VDom.StringRenderer as VSR
@@ -44,7 +45,7 @@ propNameToAttrName = case _ of
 renderProperty ∷ String → PropValue → Maybe String
 renderProperty name prop = case typeOf (unsafeToForeign prop) of
   "string"  → renderAttr name' $ (unsafeCoerce ∷ PropValue → String) prop
-  "number"  → renderAttr name' $ show ((unsafeCoerce ∷ PropValue → Number) prop)
+  "number"  → renderAttr name' $ Data.Number.Format.toString ((unsafeCoerce ∷ PropValue → Number) prop)
   "boolean" →
     if ((unsafeCoerce :: PropValue -> Boolean) prop)
       then Just $ escape name'
